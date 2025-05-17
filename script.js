@@ -96,23 +96,51 @@ document.getElementById("iterationForm").addEventListener("submit", function (e)
       current = next;
     }
     displayTable(["i", "x", "f(x)", "f'(x)", "Relative Error (%)"], data);
-  } else {
-    explain += "Secant Formula: xₙ₊₁ = xₙ - f(xₙ)*(xₙ - xₙ₋₁)/(f(xₙ) - f(xₙ₋₁))\n";
-    let a = x0, b = x1;
-    for (let i = 0; i < iterations; i++) {
-      const fa = f(a), fb = f(b);
-      const next = b - fb * (b - a) / (fb - fa);
-      const err = Math.abs((next - b) / next) * 100;
-      data.push([i+1, a.toFixed(decimals), b.toFixed(decimals), fa.toFixed(decimals), fb.toFixed(decimals), err.toFixed(decimals)]);
-      explain += `Iteration ${i+1}:\n  xₙ₊₁ = ${b.toFixed(decimals)} - ${fb.toFixed(decimals)}*(${b.toFixed(decimals)} - ${a.toFixed(decimals)}) / (${fb.toFixed(decimals)} - ${fa.toFixed(decimals)}) = ${next.toFixed(decimals)}\n  Relative Error = ${err.toFixed(decimals)}%\n\n`;
-      a = b;
-      b = next;
+  }else {
+  explain += "Secant Formula: xₙ₊₁ = xₙ - f(xₙ)*(xₙ - xₙ₋₁)/(f(xₙ) - f(xₙ₋₁))\n";
+  let a = x0, b = x1;
+
+  for (let i = 0; i < iterations; i++) {
+    const fa = f(a), fb = f(b);
+    const denominator = fb - fa;
+
+    if (Math.abs(denominator) < 1e-12) {
+      explain += `Iteration ${i + 1} failed: Division by zero (f(b) - f(a) ≈ 0)\n`;
+      data.push([
+        i + 1,
+        a.toFixed(decimals),
+        b.toFixed(decimals),
+        fa.toFixed(decimals),
+        fb.toFixed(decimals),
+        "NaN"
+      ]);
+      break;
     }
-    displayTable(["i", "xₐ", "xᵦ", "f(xₐ)", "f(xᵦ)", "Relative Error (%)"], data);
+
+    const next = b - fb * (b - a) / denominator;
+    const err = Math.abs((next - b) / next) * 100;
+
+    data.push([
+      i + 1,
+      a.toFixed(decimals),
+      b.toFixed(decimals),
+      fa.toFixed(decimals),
+      fb.toFixed(decimals),
+      err.toFixed(decimals)
+    ]);
+
+    explain += `Iteration ${i + 1}:\n`;
+    explain += `  xₙ₊₁ = ${b.toFixed(decimals)} - ${fb.toFixed(decimals)} * (${b.toFixed(decimals)} - ${a.toFixed(decimals)}) / (${fb.toFixed(decimals)} - ${fa.toFixed(decimals)}) = ${next.toFixed(decimals)}\n`;
+    explain += `  Relative Error = ${err.toFixed(decimals)}%\n\n`;
+
+    a = b;
+    b = next;
   }
 
+  displayTable(["i", "xₐ", "xᵦ", "f(xₐ)", "f(xᵦ)", "Relative Error (%)"], data);
   explanation.innerText = explain;
-});
+}
+);
 
 function displayTable(headers, data) {
   let tableHTML = "<table><thead><tr>";
