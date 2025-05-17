@@ -14,6 +14,11 @@ function parseFraction(input) {
   return parts.length === 2 && parts[1] !== 0 ? parts[0] / parts[1] : NaN;
 }
 
+// ✅ Safe number formatter (handles NaN as 0)
+function safe(val, decimals) {
+  return isNaN(val) ? (0).toFixed(decimals) : val.toFixed(decimals);
+}
+
 // Show/hide relevant fields
 document.getElementById("method").addEventListener("change", function () {
   const method = this.value;
@@ -78,8 +83,8 @@ document.getElementById("iterationForm").addEventListener("submit", function (e)
     for (let i = 0; i < iterations; i++) {
       const gval = gx(current);
       const err = Math.abs((gval - current) / gval) * 100;
-      data.push([i+1, current.toFixed(decimals), gval.toFixed(decimals), err.toFixed(decimals)]);
-      explain += `Iteration ${i+1}:\n  Formula: xₙ₊₁ = g(xₙ) = g(${current.toFixed(decimals)}) = ${gval.toFixed(decimals)}\n  Relative Error = ${err.toFixed(decimals)}%\n\n`;
+      data.push([i + 1, safe(current, decimals), safe(gval, decimals), safe(err, decimals)]);
+      explain += `Iteration ${i + 1}:\n  Formula: xₙ₊₁ = g(xₙ) = g(${safe(current, decimals)}) = ${safe(gval, decimals)}\n  Relative Error = ${safe(err, decimals)}%\n\n`;
       current = gval;
     }
     displayTable(["i", "x", "g(x)", "Relative Error (%)"], data);
@@ -91,8 +96,8 @@ document.getElementById("iterationForm").addEventListener("submit", function (e)
       const dfx = df(current);
       const next = current - fx / dfx;
       const err = Math.abs((next - current) / next) * 100;
-      data.push([i+1, current.toFixed(decimals), fx.toFixed(decimals), dfx.toFixed(decimals), err.toFixed(decimals)]);
-      explain += `Iteration ${i+1}:\n  Formula: xₙ₊₁ = ${current.toFixed(decimals)} - ${fx.toFixed(decimals)}/${dfx.toFixed(decimals)} = ${next.toFixed(decimals)}\n  Relative Error = ${err.toFixed(decimals)}%\n\n`;
+      data.push([i + 1, safe(current, decimals), safe(fx, decimals), safe(dfx, decimals), safe(err, decimals)]);
+      explain += `Iteration ${i + 1}:\n  Formula: xₙ₊₁ = ${safe(current, decimals)} - ${safe(fx, decimals)}/${safe(dfx, decimals)} = ${safe(next, decimals)}\n  Relative Error = ${safe(err, decimals)}%\n\n`;
       current = next;
     }
     displayTable(["i", "x", "f(x)", "f'(x)", "Relative Error (%)"], data);
@@ -103,8 +108,8 @@ document.getElementById("iterationForm").addEventListener("submit", function (e)
       const fa = f(a), fb = f(b);
       const next = b - fb * (b - a) / (fb - fa);
       const err = Math.abs((next - b) / next) * 100;
-      data.push([i+1, a.toFixed(decimals), b.toFixed(decimals), fa.toFixed(decimals), fb.toFixed(decimals), err.toFixed(decimals)]);
-      explain += `Iteration ${i+1}:\n  xₙ₊₁ = ${b.toFixed(decimals)} - ${fb.toFixed(decimals)}*(${b.toFixed(decimals)} - ${a.toFixed(decimals)}) / (${fb.toFixed(decimals)} - ${fa.toFixed(decimals)}) = ${next.toFixed(decimals)}\n  Relative Error = ${err.toFixed(decimals)}%\n\n`;
+      data.push([i + 1, safe(a, decimals), safe(b, decimals), safe(fa, decimals), safe(fb, decimals), safe(err, decimals)]);
+      explain += `Iteration ${i + 1}:\n  xₙ₊₁ = ${safe(b, decimals)} - ${safe(fb, decimals)}*(${safe(b, decimals)} - ${safe(a, decimals)}) / (${safe(fb, decimals)} - ${safe(fa, decimals)}) = ${safe(next, decimals)}\n  Relative Error = ${safe(err, decimals)}%\n\n`;
       a = b;
       b = next;
     }
@@ -131,30 +136,18 @@ function displayTable(headers, data) {
 document.getElementById("switchToDiff").addEventListener("click", () => {
   const root = document.getElementById("rootFinderSection");
   const diff = document.getElementById("diffSection");
-  const btn = document.getElementById("switchToDiff");
-  const label = document.querySelector(".switch-label");  // <span> inside the button
-  const img = document.querySelector("#switchToDiff img"); // <img> inside the button
+  const img = document.querySelector("#switchToDiff img");
 
   if (diff.style.display === "none") {
-    // Show Numerical Differentiation section
     root.style.display = "none";
     diff.style.display = "block";
-
-    // Update text and image
-    
     img.src = "img/switchR.png";
   } else {
-    // Show Root Finder section
     root.style.display = "block";
     diff.style.display = "none";
-
-    // Update text and image
-   
     img.src = "img/switchN.png";
   }
 });
-
-
 
 // Numerical Differentiation Logic
 document.getElementById("diffForm").addEventListener("submit", function (e) {
@@ -187,7 +180,7 @@ document.getElementById("diffForm").addEventListener("submit", function (e) {
 
     let tableHTML = `
       <div><strong>Function:</strong> f(x) = ${exprStr}</div>
-      <div><strong>x =</strong> ${x.toFixed(decimals)}, <strong>h =</strong> ${h}</div>
+      <div><strong>x =</strong> ${safe(x, decimals)}, <strong>h =</strong> ${h}</div>
       <br>
       <table>
         <thead>
@@ -200,37 +193,35 @@ document.getElementById("diffForm").addEventListener("submit", function (e) {
         <tbody>
           <tr>
             <td>Exact Derivative</td>
-            <td>${exact.toFixed(decimals)}</td>
+            <td>${safe(exact, decimals)}</td>
             <td>—</td>
           </tr>
           <tr>
             <td>Forward Difference</td>
-            <td>${forward.toFixed(decimals)}</td>
-            <td>${err(forward).toFixed(decimals)}%</td>
+            <td>${safe(forward, decimals)}</td>
+            <td>${safe(err(forward), decimals)}%</td>
           </tr>
           <tr>
             <td>Backward Difference</td>
-            <td>${backward.toFixed(decimals)}</td>
-            <td>${err(backward).toFixed(decimals)}%</td>
+            <td>${safe(backward, decimals)}</td>
+            <td>${safe(err(backward), decimals)}%</td>
           </tr>
           <tr>
             <td>Central Difference</td>
-            <td>${central.toFixed(decimals)}</td>
-            <td>${err(central).toFixed(decimals)}%</td>
+            <td>${safe(central, decimals)}</td>
+            <td>${safe(err(central), decimals)}%</td>
           </tr>
         </tbody>
       </table>
     `;
 
     document.getElementById("diffResult").innerHTML = tableHTML;
-
   } catch {
     alert("Error parsing function or inputs. Please check syntax.");
   }
 });
 
-
-
+// Info Popup
 const infoIcon = document.getElementById("info-icon");
 const infoPop = document.getElementById("info-pop");
 const closeBtn = document.getElementById("closeBtn");
@@ -248,4 +239,3 @@ infoPop.addEventListener("click", (e) => {
     infoPop.style.display = "none";
   }
 });
-
