@@ -96,21 +96,59 @@ document.getElementById("iterationForm").addEventListener("submit", function (e)
       current = next;
     }
     displayTable(["i", "x", "f(x)", "f'(x)", "Relative Error (%)"], data);
-  } else {
-    explain += "Secant Formula: xₙ₊₁ = xₙ - f(xₙ)*(xₙ - xₙ₋₁)/(f(xₙ) - f(xₙ₋₁))\n";
-    let a = x0, b = x1;
-    for (let i = 0; i < iterations; i++) {
-      const fa = f(a), fb = f(b);
-      const next = b - fb * (b - a) / (fb - fa);
-      const err = Math.abs((next - b) / next) * 100;
-      data.push([i+1, a.toFixed(decimals), b.toFixed(decimals), fa.toFixed(decimals), fb.toFixed(decimals), err.toFixed(decimals)]);
-      explain += `Iteration ${i+1}:\n  xₙ₊₁ = ${b.toFixed(decimals)} - ${fb.toFixed(decimals)}*(${b.toFixed(decimals)} - ${a.toFixed(decimals)}) / (${fb.toFixed(decimals)} - ${fa.toFixed(decimals)}) = ${next.toFixed(decimals)}\n  Relative Error = ${err.toFixed(decimals)}%\n\n`;
-      a = b;
-      b = next;
+  } else if { (method === "secant") {
+  explain += "Secant Formula: xₙ₊₁ = xₙ - f(xₙ) * (xₙ - xₙ₋₁) / (f(xₙ) - f(xₙ₋₁))\n";
+  let a = x0, b = x1;
+  const data = [];
+
+  for (let i = 0; i < iterations; i++) {
+    const fa = f(a);
+    const fb = f(b);
+
+    if (!isFinite(fa) || !isFinite(fb)) {
+      explain += `Iteration ${i + 1} stopped: f(a) or f(b) is not finite.\n`;
+      data.push([i + 1, a, b, fa, fb, "Invalid f(x)"]);
+      break;
     }
-    displayTable(["i", "xₐ", "xᵦ", "f(xₐ)", "f(xᵦ)", "Relative Error (%)"], data);
+
+    const denominator = fb - fa;
+
+    let next;
+    if (Math.abs(denominator) < 1e-15) {
+      // Quietly reuse previous b if denominator too small
+      next = b;
+    } else {
+      next = b - fb * (b - a) / denominator;
+    }
+
+    if (!isFinite(next)) {
+      explain += `Iteration ${i + 1} stopped: Next x is not finite.\n`;
+      data.push([i + 1, a, b, fa, fb, "Invalid next"]);
+      break;
+    }
+
+    const err = next !== 0 ? Math.abs((next - b) / next) * 100 : 0;
+
+    data.push([
+      i + 1,
+      a.toFixed(decimals),
+      b.toFixed(decimals),
+      fa.toFixed(decimals),
+      fb.toFixed(decimals),
+      err.toFixed(decimals)
+    ]);
+
+    explain += `Iteration ${i + 1}:\n`;
+    explain += `  xₙ₊₁ = ${b.toFixed(decimals)} - ${fb.toFixed(decimals)} * (${b.toFixed(decimals)} - ${a.toFixed(decimals)}) / (${fb.toFixed(decimals)} - ${fa.toFixed(decimals)}) = ${next.toFixed(decimals)}\n`;
+    explain += `  Relative Error = ${err.toFixed(decimals)}%\n\n`;
+
+    a = b;
+    b = next;
+
+    if (err < Math.pow(10, -decimals)) break; // convergence condition
   }
 
+  displayTable(["i", "xₐ", "xᵦ", "f(xₐ)", "f(xᵦ)", "Relative Error (%)"], data);
   explanation.innerText = explain;
 });
 
