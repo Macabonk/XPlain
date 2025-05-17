@@ -96,35 +96,33 @@ document.getElementById("iterationForm").addEventListener("submit", function (e)
       current = next;
     }
     displayTable(["i", "x", "f(x)", "f'(x)", "Relative Error (%)"], data);
-  }else {
+  } } else if (method === "secant") {
   explain += "Secant Formula: xₙ₊₁ = xₙ - f(xₙ) * (xₙ - xₙ₋₁) / (f(xₙ) - f(xₙ₋₁))\n";
   let a = x0, b = x1;
 
   for (let i = 0; i < iterations; i++) {
-    let fa = f(a), fb = f(b);
+    const fa = f(a);
+    const fb = f(b);
 
-    // Check for NaN or Infinity in function evaluations
     if (!isFinite(fa) || !isFinite(fb)) {
-      explain += `Iteration ${i + 1} failed: f(a) or f(b) is not finite (NaN or Infinity).\n`;
-      data.push([i + 1, a.toFixed(decimals), b.toFixed(decimals), fa, fb, "NaN"]);
+      explain += `Iteration ${i + 1} failed: f(a) or f(b) is not finite.\n`;
+      data.push([i + 1, a, b, fa, fb, "NaN"]);
       break;
     }
 
     const denominator = fb - fa;
 
-    // Avoid division by zero or near-zero
-    if (Math.abs(denominator) < 1e-12) {
-      explain += `Iteration ${i + 1} failed: Division by zero (f(b) - f(a) ≈ 0)\n`;
-      data.push([i + 1, a.toFixed(decimals), b.toFixed(decimals), fa.toFixed(decimals), fb.toFixed(decimals), "NaN"]);
+    if (Math.abs(denominator) < 1e-15) {
+      explain += `Iteration ${i + 1} failed: Denominator too small, division by near-zero.\n`;
+      data.push([i + 1, a, b, fa, fb, "NaN"]);
       break;
     }
 
     const next = b - fb * (b - a) / denominator;
 
-    // Check if next is a valid number
     if (!isFinite(next)) {
-      explain += `Iteration ${i + 1} failed: Computed xₙ₊₁ is not a finite number.\n`;
-      data.push([i + 1, a.toFixed(decimals), b.toFixed(decimals), fa.toFixed(decimals), fb.toFixed(decimals), "NaN"]);
+      explain += `Iteration ${i + 1} failed: Next value is not finite.\n`;
+      data.push([i + 1, a, b, fa, fb, "NaN"]);
       break;
     }
 
@@ -143,8 +141,12 @@ document.getElementById("iterationForm").addEventListener("submit", function (e)
     explain += `  xₙ₊₁ = ${b.toFixed(decimals)} - ${fb.toFixed(decimals)} * (${b.toFixed(decimals)} - ${a.toFixed(decimals)}) / (${fb.toFixed(decimals)} - ${fa.toFixed(decimals)}) = ${next.toFixed(decimals)}\n`;
     explain += `  Relative Error = ${err.toFixed(decimals)}%\n\n`;
 
+    // Prepare for next iteration
     a = b;
     b = next;
+
+    // Optional: Stop early if error is really low
+    if (err < Math.pow(10, -decimals)) break;
   }
 
   displayTable(["i", "xₐ", "xᵦ", "f(xₐ)", "f(xᵦ)", "Relative Error (%)"], data);
