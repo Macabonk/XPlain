@@ -145,12 +145,12 @@ document.getElementById("iterationForm").addEventListener("submit", function (e)
 
     a = b;
     b = next;
-  }
-
+  
+}
   displayTable(["i", "xₐ", "xᵦ", "f(xₐ)", "f(xᵦ)", "Relative Error (%)"], data);
   explanation.innerText = explain;
 }
-
+}
 );
 
 function displayTable(headers, data) {
