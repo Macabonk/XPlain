@@ -1,0 +1,272 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #b3d2dc;
+  margin: 0;
+  padding: 20px  ;
+  background: url('img/bg.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+
+.container {
+  max-width: 800px;
+  margin: 55px auto 0;  /* Pushes container down by 80px */
+  background: #fff;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  background: url('img/texture.jpg') ;
+}
+
+img {
+  height: 200px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+
+}
+
+
+form label {
+  display: block;
+  margin: 10px 0 5px;
+}
+
+input,
+select,
+button {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+button{
+  background: #35778b;
+  height: auto;
+  border: none;
+  cursor: pointer;
+}
+
+.rf {
+  height: 50px;
+}
+
+.sw{
+  height: 50px;
+}
+
+button:hover {
+  background: #234c63;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table,
+th,
+td {
+  border: 1px solid #094594;
+}
+
+th,
+td {
+  padding: 8px;
+  text-align: center;
+}
+
+th {
+  background: #b8e5f3;
+}
+
+
+#derivativeDisplay {
+  background: #f2f2f2;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-family: monospace;
+  font-size: 20px;
+}
+
+.explanation {
+  background: #e9ecef;
+  padding: 15px;
+  border-radius: 5px;
+  margin-top: 20px;
+  white-space: pre-wrap;
+  font-family: monospace;
+  font-size: large;
+}
+
+.mode-switch {
+  position: fixed;
+  top: 5px;
+  left: 0px;
+  background: #000000;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+
+/* Make all input boxes and dropdowns more visible */
+form#iterationForm input[type="text"],
+form#iterationForm select {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  border: 2px solid #888; 
+  border-radius: 6px;
+  background-color: #fff;
+  color: #000;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Highlight when focused */
+form#iterationForm input[type="text"]:focus,
+form#iterationForm select:focus {
+  border-color: #a8c9ec;
+  box-shadow: 0 0 5px rgba(4, 60, 119, 0.5);
+  outline: none;
+}
+
+/* Placeholder text styling */
+form#iterationForm input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+/* Uniform label styling */
+form#iterationForm label {
+  font-size: 18px;
+  font-family: 'Times New Roman', Times, serif;
+  display: block;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+/* Style checkbox row */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 6px;
+  height: 48px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+  background-color: #f1f1f1;
+  font-size: 18px;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+/* Checkbox styling */
+.checkbox-container input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+/* Checkbox label */
+.checkbox-container label {
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  cursor: pointer;
+}
+
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: sans-serif;
+}
+
+.circle-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  background: white;
+}
+
+.circle-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Popup overlay */
+.popup-overlay {
+  display: none; /* hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Popup content container */
+.popup-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
+
+.close-btn {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  background: white;
+  border: none;
+  font-size: 30px;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  line-height: 30px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* Popup image */
+.popup-content img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 10px;
+}
+
+.popup-content {
+  position: relative;
+  max-width: 95vw;   
+  max-height: 95vh;  
+}
+
+.popup-content img {
+  width: 100%;       
+  height: auto;
+  max-height: 90vh;  
+  border-radius: 10px;
+}
