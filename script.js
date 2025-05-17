@@ -97,27 +97,37 @@ document.getElementById("iterationForm").addEventListener("submit", function (e)
     }
     displayTable(["i", "x", "f(x)", "f'(x)", "Relative Error (%)"], data);
   }else {
-  explain += "Secant Formula: xₙ₊₁ = xₙ - f(xₙ)*(xₙ - xₙ₋₁)/(f(xₙ) - f(xₙ₋₁))\n";
+  explain += "Secant Formula: xₙ₊₁ = xₙ - f(xₙ) * (xₙ - xₙ₋₁) / (f(xₙ) - f(xₙ₋₁))\n";
   let a = x0, b = x1;
 
   for (let i = 0; i < iterations; i++) {
-    const fa = f(a), fb = f(b);
+    let fa = f(a), fb = f(b);
+
+    // Check for NaN or Infinity in function evaluations
+    if (!isFinite(fa) || !isFinite(fb)) {
+      explain += `Iteration ${i + 1} failed: f(a) or f(b) is not finite (NaN or Infinity).\n`;
+      data.push([i + 1, a.toFixed(decimals), b.toFixed(decimals), fa, fb, "NaN"]);
+      break;
+    }
+
     const denominator = fb - fa;
 
+    // Avoid division by zero or near-zero
     if (Math.abs(denominator) < 1e-12) {
       explain += `Iteration ${i + 1} failed: Division by zero (f(b) - f(a) ≈ 0)\n`;
-      data.push([
-        i + 1,
-        a.toFixed(decimals),
-        b.toFixed(decimals),
-        fa.toFixed(decimals),
-        fb.toFixed(decimals),
-        "NaN"
-      ]);
+      data.push([i + 1, a.toFixed(decimals), b.toFixed(decimals), fa.toFixed(decimals), fb.toFixed(decimals), "NaN"]);
       break;
     }
 
     const next = b - fb * (b - a) / denominator;
+
+    // Check if next is a valid number
+    if (!isFinite(next)) {
+      explain += `Iteration ${i + 1} failed: Computed xₙ₊₁ is not a finite number.\n`;
+      data.push([i + 1, a.toFixed(decimals), b.toFixed(decimals), fa.toFixed(decimals), fb.toFixed(decimals), "NaN"]);
+      break;
+    }
+
     const err = Math.abs((next - b) / next) * 100;
 
     data.push([
@@ -140,6 +150,7 @@ document.getElementById("iterationForm").addEventListener("submit", function (e)
   displayTable(["i", "xₐ", "xᵦ", "f(xₐ)", "f(xᵦ)", "Relative Error (%)"], data);
   explanation.innerText = explain;
 }
+
 );
 
 function displayTable(headers, data) {
