@@ -149,9 +149,7 @@ document.getElementById("iterationForm").addEventListener("submit", function (e)
 
   displayTable(["i", "xₐ", "xᵦ", "f(xₐ)", "f(xᵦ)", "Relative Error (%)"], data);
   explanation.innerText = explain;
-}
-
-);
+}});
 
 function displayTable(headers, data) {
   let tableHTML = "<table><thead><tr>";
@@ -279,6 +277,7 @@ infoIcon.addEventListener("click", () => {
 });
 
 closeBtn.addEventListener("click", () => {
+  console.log("clicked");
   infoPop.style.display = "none";
 });
 
