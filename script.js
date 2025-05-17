@@ -153,6 +153,7 @@ document.getElementById("iterationForm").addEventListener("submit", function (e)
 }
 );
 
+
 function displayTable(headers, data) {
   let tableHTML = "<table><thead><tr>";
   headers.forEach(header => tableHTML += `<th>${header}</th>`);
